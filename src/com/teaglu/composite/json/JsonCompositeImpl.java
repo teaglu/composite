@@ -15,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.teaglu.composite.Composite;
+import com.teaglu.composite.exception.FormatException;
 import com.teaglu.composite.exception.MissingValueException;
 import com.teaglu.composite.exception.UnsupportedSerializationException;
 import com.teaglu.composite.exception.WrongTypeException;
@@ -88,7 +89,6 @@ public final class JsonCompositeImpl implements Composite {
 		return rval;
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public @NonNull String getRequiredString(@NonNull String name) throws WrongTypeException, MissingValueException {
 		if (!object.has(name)) {
@@ -106,7 +106,9 @@ public final class JsonCompositeImpl implements Composite {
 			throw new WrongTypeException(name, "String");
 		}
 		
-		return pr.getAsString();
+		
+		@SuppressWarnings("null") @NonNull String rval= pr.getAsString();
+		return rval;
 	}
 
 	@Override
@@ -129,11 +131,8 @@ public final class JsonCompositeImpl implements Composite {
 		return pr.getAsBoolean();
 	}
 
-	@SuppressWarnings("null")
 	@Override
-	public @NonNull LocalDate getRequiredLocalDate(@NonNull String name) throws WrongTypeException, MissingValueException {
-		LocalDate rval= null;
-		
+	public @NonNull LocalDate getRequiredLocalDate(@NonNull String name) throws WrongTypeException, MissingValueException, FormatException {
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -149,21 +148,22 @@ public final class JsonCompositeImpl implements Composite {
 		}
 
 		String value= pr.getAsString();
-				
-		try {
-			rval= LocalDate.parse(value);
-		} catch (NumberFormatException e) {
-			throw new WrongTypeException(name, "Date");
-		}
 
-		return rval;
+		try {
+			LocalDate rval= LocalDate.parse(value);
+			
+			if (rval == null) {
+				throw new RuntimeException("LocalDate parse returned null, which is disallowed by spec");
+			}
+			
+			return rval;
+		} catch (NumberFormatException e) {
+			throw new FormatException("Unable to parse " + name + " value '" + value + "' to a LocalDate");
+		}
 	}
 
-	@SuppressWarnings("null")
 	@Override
-	public @NonNull Timestamp getRequiredTimestamp(@NonNull String name) throws WrongTypeException, MissingValueException {
-		Timestamp rval= null;
-		
+	public @NonNull Timestamp getRequiredTimestamp(@NonNull String name) throws WrongTypeException, MissingValueException, FormatException {
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -179,7 +179,8 @@ public final class JsonCompositeImpl implements Composite {
 		}
 
 		String value= pr.getAsString();
-				
+
+		Timestamp rval= null;
 		try {
 			int timePart= value.indexOf('T');
 			if (timePart != -1) {
@@ -190,14 +191,17 @@ public final class JsonCompositeImpl implements Composite {
 				LocalDate lt= LocalDate.parse(value);
 				rval= Timestamp.from(lt.atStartOfDay(zoneId).toInstant());
 			}
-		} catch (NumberFormatException e) {
-			throw new WrongTypeException(name, "Date");
-		}
+			
+			if (rval == null) {
+				throw new RuntimeException("Timestamp parse returned null, which is disallowed by spec");
+			}
 
-		return rval;
+			return rval;
+		} catch (NumberFormatException e) {
+			throw new FormatException("Unable to parse " + name + " value '" + value + "' into Timestamp");
+		}
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public @NonNull Composite getRequiredObject(@NonNull String name) throws WrongTypeException, MissingValueException {
 		if (!object.has(name)) {
@@ -209,7 +213,9 @@ public final class JsonCompositeImpl implements Composite {
 			throw new WrongTypeException(name, "Object");
 		}
 		
-		return new JsonCompositeImpl(el.getAsJsonObject(), zoneId);
+		@SuppressWarnings("null") @NonNull JsonObject rval= el.getAsJsonObject();
+		
+		return new JsonCompositeImpl(rval, zoneId);
 	}
 
 	@Override
@@ -306,8 +312,6 @@ public final class JsonCompositeImpl implements Composite {
 		
 		return rval;
 	}
-	
-	// Start of Orig
 	
 	@Override
 	public Integer getOptionalInteger(@NonNull String name) throws WrongTypeException {
@@ -411,7 +415,7 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public LocalDate getOptionalLocalDate(@NonNull String name) throws WrongTypeException {
+	public LocalDate getOptionalLocalDate(@NonNull String name) throws WrongTypeException, FormatException {
 		LocalDate rval= null;
 		
 		if (object.has(name)) {
@@ -430,7 +434,7 @@ public final class JsonCompositeImpl implements Composite {
 				try {
 					rval= LocalDate.parse(value);
 				} catch (NumberFormatException e) {
-					throw new WrongTypeException(name, "Date");
+					throw new FormatException("Unable to parse " + name + " value '" + value + "' into LocalDate");
 				}
 			}
 		}
@@ -439,7 +443,7 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public Timestamp getOptionalTimestamp(@NonNull String name) throws WrongTypeException {
+	public Timestamp getOptionalTimestamp(@NonNull String name) throws WrongTypeException, FormatException {
 		Timestamp rval= null;
 		
 		if (object.has(name)) {
@@ -455,6 +459,7 @@ public final class JsonCompositeImpl implements Composite {
 
 				String value= pr.getAsString();
 				
+				try {
 				int timePart= value.indexOf('T');
 				if (timePart != -1) {
 					OffsetDateTime odt= OffsetDateTime.parse(value);
@@ -464,13 +469,15 @@ public final class JsonCompositeImpl implements Composite {
 					LocalDate lt= LocalDate.parse(value);
 					rval= Timestamp.from(lt.atStartOfDay(zoneId).toInstant());
 				}
+				} catch (NumberFormatException e) {
+					throw new FormatException("Unable to parse " + name + " value '" + value + "' into LocalDate");
+				}
 			}
 		}
 		
 		return rval;
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public Composite getOptionalObject(@NonNull String name) throws WrongTypeException {
 		Composite rval= null;
@@ -482,7 +489,9 @@ public final class JsonCompositeImpl implements Composite {
 					throw new WrongTypeException(name, "Object");
 				}
 				
-				rval= new JsonCompositeImpl(el.getAsJsonObject(), zoneId);
+				@SuppressWarnings("null") @NonNull JsonObject ob= el.getAsJsonObject();
+				
+				rval= new JsonCompositeImpl(ob, zoneId);
 			}
 		}
 		
@@ -490,7 +499,7 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public Iterable<Map.Entry<@NonNull String, @NonNull Composite>> getObjectMap() throws WrongTypeException {
+	public @NonNull Iterable<Map.Entry<@NonNull String, @NonNull Composite>> getObjectMap() throws WrongTypeException {
 		return new JsonCompositeMapImpl(object, zoneId);
 	}
 	
@@ -594,12 +603,14 @@ public final class JsonCompositeImpl implements Composite {
 		return object.toString();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public @NonNull <Representation extends Object> Representation serialize(Class<? extends Representation> representationClass) {
 		if (!representationClass.isAssignableFrom(JsonObject.class)) {
 			throw new UnsupportedSerializationException(representationClass);
 		}
 		
-		return (Representation)object;
+		@SuppressWarnings("unchecked")
+		Representation rval= (Representation)object;
+		
+		return rval;
 	}
 }

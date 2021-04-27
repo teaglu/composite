@@ -12,11 +12,12 @@ import com.teaglu.composite.Composite;
 
 public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull String, @NonNull Composite>> {	
 	private static class ObjectMapIterator implements Iterator<Map.Entry<@NonNull String, @NonNull Composite>> {
-		Iterator<Map.Entry<String, JsonElement>> iterator;
-		ZoneId zoneId;
+		private Iterator<Map.Entry<String, JsonElement>> iterator;
+		private @NonNull ZoneId zoneId;
 		
-		private ObjectMapIterator(JsonObject object, ZoneId zoneId) {
+		private ObjectMapIterator(@NonNull JsonObject object, @NonNull ZoneId zoneId) {
 			iterator= object.entrySet().iterator();
+			this.zoneId= zoneId;
 		}
 		
 		@Override
@@ -29,12 +30,14 @@ public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull S
 			final Map.Entry<String, JsonElement> el= iterator.next();
 			
 			return new Map.Entry<@NonNull String, @NonNull Composite>() {
+				// Gson doesn't support null annotations, so we have to eat the warning somewhere
 				@SuppressWarnings("null")
 				@Override
 				public @NonNull String getKey() {
 					return el.getKey();
 				}
 
+				// Gson doesn't support null annotations, so we have to eat the warning somewhere
 				@SuppressWarnings("null")
 				@Override
 				public @NonNull Composite getValue() {
@@ -49,10 +52,10 @@ public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull S
 		}
 	}
 	
-	private JsonObject object;
-	private ZoneId zoneId;
+	private @NonNull JsonObject object;
+	private @NonNull ZoneId zoneId;
 	
-	JsonCompositeMapImpl(JsonObject object, ZoneId zoneId) {
+	JsonCompositeMapImpl(@NonNull JsonObject object, @NonNull ZoneId zoneId) {
 		this.object= object;
 		this.zoneId= zoneId;
 	}
