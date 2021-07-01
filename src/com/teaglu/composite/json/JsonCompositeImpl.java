@@ -28,6 +28,11 @@ public final class JsonCompositeImpl implements Composite {
 		this.object= object;
 		this.zoneId= zoneId;
 	}
+	
+	@Deprecated
+	public JsonElement getElement(@NonNull String name) {
+		return object.get(name);
+	}
 
 	@Override
 	public int getRequiredInteger(@NonNull String name) throws WrongTypeException, MissingValueException {

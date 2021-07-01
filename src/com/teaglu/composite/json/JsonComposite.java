@@ -191,6 +191,21 @@ public final class JsonComposite {
 		
 		return rval;
 	}
+	
+	/**
+	 * ParseObject
+	 * 
+	 * Parse a Postgres PGobject from a JSON column and create an object
+	 *
+	 * @param pgObject					Object from JDBC getObject()
+	 * 
+	 * @return							Composite object
+	 * 
+	 * @throws WrongTypeException
+	 */
+	public static @Nullable Composite ParseObject(PGobject pgObject) throws WrongTypeException {
+		return ParseObject(pgObject, defaultTimezone);
+	}
 
 	/**
 	 * ParseArray
@@ -225,5 +240,20 @@ public final class JsonComposite {
 		}
 		
 		return rval;
+	}
+	
+	/**
+	 * ParseArray
+	 * 
+	 * Parse a Postgres PGobject from a JSON column and create an array
+	 *
+	 * @param pgObject					Object from JDBC getObject()
+	 * 
+	 * @return							Composite object
+	 * 
+	 * @throws WrongTypeException
+	 */
+	public static @Nullable List<@NonNull Composite> ParseArray(PGobject pgObject) throws WrongTypeException {
+		return ParseArray(pgObject, defaultTimezone);
 	}
 }
