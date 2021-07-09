@@ -35,7 +35,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public int getRequiredInteger(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public int getRequiredInteger(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		int rval= 0;
 		
 		if (!object.has(name)) {
@@ -65,7 +67,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 	
 	@Override
-	public double getRequiredDouble(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public double getRequiredDouble(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		double rval= 0;
 		
 		if (!object.has(name)) {
@@ -95,7 +99,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public @NonNull String getRequiredString(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public @NonNull String getRequiredString(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -117,7 +123,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public boolean getRequiredBoolean(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public boolean getRequiredBoolean(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -137,7 +145,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public @NonNull LocalDate getRequiredLocalDate(@NonNull String name) throws WrongTypeException, MissingValueException, FormatException {
+	public @NonNull LocalDate getRequiredLocalDate(
+			@NonNull String name) throws WrongTypeException, MissingValueException, FormatException
+	{
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -168,7 +178,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public @NonNull Timestamp getRequiredTimestamp(@NonNull String name) throws WrongTypeException, MissingValueException, FormatException {
+	public @NonNull Timestamp getRequiredTimestamp(
+			@NonNull String name) throws WrongTypeException, MissingValueException, FormatException
+	{
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -208,7 +220,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public @NonNull Composite getRequiredObject(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public @NonNull Composite getRequiredObject(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -224,7 +238,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public @NonNull Iterable<@NonNull Composite> getRequiredObjectArray(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public @NonNull Iterable<@NonNull Composite> getRequiredObjectArray(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
 		}
@@ -249,7 +265,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 	
 	@Override
-	public @NonNull Iterable<@NonNull String> getRequiredStringArray(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public @NonNull Iterable<@NonNull String> getRequiredStringArray(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		JsonElement el= object.get(name);
 		if (el == null) {
 			throw new MissingValueException(name);
@@ -281,7 +299,9 @@ public final class JsonCompositeImpl implements Composite {
 	
 	@SuppressWarnings("null")
 	@Override
-	public @NonNull Iterable<@NonNull Integer> getRequiredIntegerArray(@NonNull String name) throws WrongTypeException, MissingValueException {
+	public @NonNull Iterable<@NonNull Integer> getRequiredIntegerArray(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
 		List<Integer> rval= new ArrayList<Integer>();
 		
 		if (!object.has(name)) {
@@ -420,7 +440,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public LocalDate getOptionalLocalDate(@NonNull String name) throws WrongTypeException, FormatException {
+	public LocalDate getOptionalLocalDate(
+			@NonNull String name) throws WrongTypeException, FormatException
+	{
 		LocalDate rval= null;
 		
 		if (object.has(name)) {
@@ -439,7 +461,8 @@ public final class JsonCompositeImpl implements Composite {
 				try {
 					rval= LocalDate.parse(value);
 				} catch (NumberFormatException e) {
-					throw new FormatException("Unable to parse " + name + " value '" + value + "' into LocalDate");
+					throw new FormatException("Unable to parse " + name + " value '" +
+							value + "' into LocalDate");
 				}
 			}
 		}
@@ -448,7 +471,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public Timestamp getOptionalTimestamp(@NonNull String name) throws WrongTypeException, FormatException {
+	public Timestamp getOptionalTimestamp(
+			@NonNull String name) throws WrongTypeException, FormatException
+	{
 		Timestamp rval= null;
 		
 		if (object.has(name)) {
@@ -475,7 +500,8 @@ public final class JsonCompositeImpl implements Composite {
 					rval= Timestamp.from(lt.atStartOfDay(zoneId).toInstant());
 				}
 				} catch (NumberFormatException e) {
-					throw new FormatException("Unable to parse " + name + " value '" + value + "' into LocalDate");
+					throw new FormatException("Unable to parse " + name + " value '" +
+							value + "' into LocalDate");
 				}
 			}
 		}
@@ -504,12 +530,16 @@ public final class JsonCompositeImpl implements Composite {
 	}
 
 	@Override
-	public @NonNull Iterable<Map.Entry<@NonNull String, @NonNull Composite>> getObjectMap() throws WrongTypeException {
+	public @NonNull Iterable<Map.Entry<@NonNull String, @NonNull Composite>> getObjectMap(
+			) throws WrongTypeException
+	{
 		return new JsonCompositeMapImpl(object, zoneId);
 	}
 	
 	@Override
-	public Iterable<@NonNull Composite> getOptionalObjectArray(@NonNull String name) throws WrongTypeException {
+	public Iterable<@NonNull Composite> getOptionalObjectArray(
+			@NonNull String name) throws WrongTypeException
+	{
 		JsonCompositeArrayImpl rval= null;
 		
 		JsonElement el= object.get(name);
@@ -537,7 +567,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 	
 	@Override
-	public Iterable<@NonNull String> getOptionalStringArray(@NonNull String name) throws WrongTypeException {
+	public Iterable<@NonNull String> getOptionalStringArray(
+			@NonNull String name) throws WrongTypeException
+	{
 		List<@NonNull String> rval= null;
 		
 		JsonElement el= object.get(name);
@@ -572,7 +604,9 @@ public final class JsonCompositeImpl implements Composite {
 	}
 	
 	@Override
-	public Iterable<@NonNull Integer> getOptionalIntegerArray(@NonNull String name) throws WrongTypeException {
+	public Iterable<@NonNull Integer> getOptionalIntegerArray(
+			@NonNull String name) throws WrongTypeException
+	{
 		List<@NonNull Integer> rval= null;
 		
 		JsonElement el= object.get(name);
@@ -608,7 +642,9 @@ public final class JsonCompositeImpl implements Composite {
 		return object.toString();
 	}
 	
-	public @NonNull <Representation extends Object> Representation serialize(Class<? extends Representation> representationClass) {
+	public @NonNull <Representation extends Object> Representation serialize(
+			@NonNull Class<? extends Representation> representationClass)
+	{
 		if (!representationClass.isAssignableFrom(JsonObject.class)) {
 			throw new UnsupportedSerializationException(representationClass);
 		}
