@@ -438,6 +438,31 @@ public final class JsonCompositeImpl implements Composite {
 		
 		return rval;
 	}
+	
+	@Override
+	public boolean getOptionalBoolean(
+			@NonNull String name,
+			boolean defaultVal) throws WrongTypeException
+	{
+		boolean rval= defaultVal;
+		
+		if (object.has(name)) {
+			JsonElement el= object.get(name);
+			if (!el.isJsonNull()) {
+				if (!el.isJsonPrimitive()) {
+					throw new WrongTypeException(name, "Boolean");
+				}
+				JsonPrimitive pr= el.getAsJsonPrimitive();
+				if (!pr.isBoolean()) {
+					throw new WrongTypeException(name, "Boolean");
+				}
+
+				rval= pr.getAsBoolean();
+			}
+		}
+		
+		return rval;
+	}
 
 	@Override
 	public LocalDate getOptionalLocalDate(

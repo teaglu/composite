@@ -226,6 +226,22 @@ public interface Composite {
 	public Boolean getOptionalBoolean(@NonNull String name) throws WrongTypeException;
 	
 	/**
+	 * getOptionalBoolean
+	 * 
+	 * Retrieve an optional boolean by name from the composite.  Return the passed default
+	 * value if the value is not present.
+	 *
+	 * @param name						Name of value to retrieve
+	 * @param defaultVal				Value to return if not specified
+	 * @return							Boolean value
+	 * 
+	 * @throws WrongTypeException
+	 */
+	public boolean getOptionalBoolean(
+			@NonNull String name,
+			boolean defaultVal) throws WrongTypeException;
+	
+	/**
 	 * getOptionalLocalDate
 	 * 
 	 * Retrieve an optional LocalDate by name from the composite.  Return null if the value is
