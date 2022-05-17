@@ -42,6 +42,21 @@ public interface Composite {
 			@NonNull String name) throws MissingValueException, WrongTypeException;
 	
 	/**
+	 * getRequiredLong
+	 * 
+	 * Retrieve a required long by name from the composite.
+	 *
+	 * @param name						Name of value to retrieve
+	 * 
+	 * @return							Long value
+	 * 
+	 * @throws MissingValueException
+	 * @throws WrongTypeException
+	 */
+	public long getRequiredLong(
+			@NonNull String name) throws MissingValueException, WrongTypeException;
+	
+	/**
 	 * getRequiredDouble
 	 * 
 	 * Retrieve a required double from the composite.
@@ -185,6 +200,19 @@ public interface Composite {
 	 * @throws WrongTypeException
 	 */
 	public Integer getOptionalInteger(@NonNull String name) throws WrongTypeException;
+	
+	/**
+	 * getOptionalLong
+	 * 
+	 * Retrieve an optional integer by name from the composite.  Return null if the value is
+	 * not defined
+	 *
+	 * @param name						Name of value to retrieve
+	 * @return							Long value
+	 * 
+	 * @throws WrongTypeException
+	 */
+	public Long getOptionalLong(@NonNull String name) throws WrongTypeException;
 	
 	/**
 	 * getOptionalDouble

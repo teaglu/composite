@@ -67,6 +67,38 @@ public final class JsonCompositeImpl implements Composite {
 	}
 	
 	@Override
+	public long getRequiredLong(
+			@NonNull String name) throws WrongTypeException, MissingValueException
+	{
+		long rval= 0;
+		
+		if (!object.has(name)) {
+			throw new MissingValueException(name);
+		}
+		
+		JsonElement el= object.get(name);
+
+		if (!el.isJsonPrimitive()) {
+			throw new WrongTypeException(name, "Long");
+		}
+		
+		JsonPrimitive pr= el.getAsJsonPrimitive();
+		if (pr.isNumber()) {
+			rval= pr.getAsLong();
+		} else if (pr.isString()) {
+			try {
+				rval= Long.parseLong(pr.getAsString());
+			} catch (NumberFormatException e) {
+				throw new WrongTypeException(name, "Long");
+			}
+		} else {
+			throw new WrongTypeException(name, "Long");
+		}
+
+		return rval;
+	}
+	
+	@Override
 	public double getRequiredDouble(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
@@ -358,7 +390,35 @@ public final class JsonCompositeImpl implements Composite {
 						throw new WrongTypeException(name, "Integer");
 					}
 				} else {
-					throw new WrongTypeException(name, "String");
+					throw new WrongTypeException(name, "Integer");
+				}
+			}
+		}
+
+		return rval;
+	}
+	
+	@Override
+	public Long getOptionalLong(@NonNull String name) throws WrongTypeException {
+		Long rval= null;
+		
+		if (object.has(name)) {
+			JsonElement el= object.get(name);
+			if (!el.isJsonNull()) {
+				if (!el.isJsonPrimitive()) {
+					throw new WrongTypeException(name, "Long");
+				}
+				JsonPrimitive pr= el.getAsJsonPrimitive();
+				if (pr.isNumber()) {
+					rval= pr.getAsLong();
+				} else if (pr.isString()) {
+					try {
+						rval= Long.parseLong(pr.getAsString());
+					} catch (NumberFormatException e) {
+						throw new WrongTypeException(name, "Long");
+					}
+				} else {
+					throw new WrongTypeException(name, "Long");
 				}
 			}
 		}
