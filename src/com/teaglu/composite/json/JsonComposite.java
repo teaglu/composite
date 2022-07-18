@@ -63,7 +63,10 @@ public final class JsonComposite {
 	 * 
 	 * @throws WrongTypeException
 	 */
-	public static @NonNull Composite Create(@NonNull JsonElement element, @NonNull TimeZone timezone) throws WrongTypeException {
+	public static @NonNull Composite Create(
+			@NonNull JsonElement element,
+			@NonNull TimeZone timezone) throws WrongTypeException
+	{
 		if (!element.isJsonObject()) {
 			throw new WrongTypeException("root", "Object");
 		}
@@ -86,7 +89,9 @@ public final class JsonComposite {
 	 * 
 	 * @throws WrongTypeException
 	 */
-	public static @NonNull Composite Create(@NonNull JsonElement element) throws WrongTypeException {
+	public static @NonNull Composite Create(
+			@NonNull JsonElement element) throws WrongTypeException
+	{
 		return Create(element, defaultTimezone);
 	}
 	
@@ -103,7 +108,10 @@ public final class JsonComposite {
 	 * @throws WrongTypeException
 	 * @throws JsonSyntaxException
 	 */
-	public static @NonNull Composite Parse(@NonNull String data, @NonNull TimeZone timezone) throws WrongTypeException, JsonSyntaxException {
+	public static @NonNull Composite Parse(
+			@NonNull String data,
+			@NonNull TimeZone timezone) throws WrongTypeException, JsonSyntaxException
+	{
 		JsonElement element= JsonParser.parseString(data);
 		if (element == null) {
 			throw new JsonSyntaxException("Unable to parse JSON data");
@@ -124,7 +132,9 @@ public final class JsonComposite {
 	 * @throws WrongTypeException
 	 * @throws JsonSyntaxException
 	 */
-	public static @NonNull Composite Parse(@NonNull String data) throws WrongTypeException, JsonSyntaxException {
+	public static @NonNull Composite Parse(
+			@NonNull String data) throws WrongTypeException, JsonSyntaxException
+	{
 		return Parse(data, defaultTimezone);
 	}
 	
@@ -141,7 +151,10 @@ public final class JsonComposite {
 	 * @throws WrongTypeException
 	 * @throws JsonSyntaxException
 	 */
-	public static @NonNull Composite Parse(@NonNull InputStreamReader reader, @NonNull TimeZone timezone) throws WrongTypeException, JsonSyntaxException {
+	public static @NonNull Composite Parse(
+			@NonNull InputStreamReader reader,
+			@NonNull TimeZone timezone) throws WrongTypeException, JsonSyntaxException
+	{
 		JsonElement element= JsonParser.parseReader(reader);
 		if (element == null) {
 			throw new JsonSyntaxException("Unable to parse JSON data");
@@ -163,7 +176,9 @@ public final class JsonComposite {
 	 * @throws WrongTypeException
 	 * @throws JsonSyntaxException
 	 */
-	public static @NonNull Composite Parse(@NonNull InputStreamReader reader) throws WrongTypeException, JsonSyntaxException {
+	public static @NonNull Composite Parse(
+			@NonNull InputStreamReader reader) throws WrongTypeException, JsonSyntaxException
+	{
 		return Parse(reader, defaultTimezone);
 	}
 	
@@ -179,7 +194,10 @@ public final class JsonComposite {
 	 * 
 	 * @throws WrongTypeException
 	 */
-	public static @Nullable Composite ParseObject(PGobject pgObject, @NonNull TimeZone timezone) throws WrongTypeException {
+	public static @Nullable Composite ParseObject(
+			@Nullable PGobject pgObject,
+			@NonNull TimeZone timezone) throws WrongTypeException
+	{
 		Composite rval= null;
 		
 		if (pgObject != null) {
@@ -203,7 +221,9 @@ public final class JsonComposite {
 	 * 
 	 * @throws WrongTypeException
 	 */
-	public static @Nullable Composite ParseObject(PGobject pgObject) throws WrongTypeException {
+	public static @Nullable Composite ParseObject(
+			@Nullable PGobject pgObject) throws WrongTypeException
+	{
 		return ParseObject(pgObject, defaultTimezone);
 	}
 
@@ -219,7 +239,10 @@ public final class JsonComposite {
 	 * 
 	 * @throws WrongTypeException
 	 */
-	public static @NonNull List<@NonNull Composite> ParseArray(PGobject pgObject, @NonNull TimeZone timezone) throws WrongTypeException {
+	public static @NonNull List<@NonNull Composite> ParseArray(
+			@Nullable PGobject pgObject,
+			@NonNull TimeZone timezone) throws WrongTypeException
+	{
 		List<@NonNull Composite> rval= new ArrayList<>();
 		
 		if (pgObject != null) {
@@ -253,7 +276,9 @@ public final class JsonComposite {
 	 * 
 	 * @throws WrongTypeException
 	 */
-	public static @Nullable List<@NonNull Composite> ParseArray(PGobject pgObject) throws WrongTypeException {
+	public static @Nullable List<@NonNull Composite> ParseArray(
+			@Nullable PGobject pgObject) throws WrongTypeException
+	{
 		return ParseArray(pgObject, defaultTimezone);
 	}
 }

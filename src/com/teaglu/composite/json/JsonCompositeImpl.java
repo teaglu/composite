@@ -20,6 +20,13 @@ import com.teaglu.composite.exception.MissingValueException;
 import com.teaglu.composite.exception.UnsupportedSerializationException;
 import com.teaglu.composite.exception.WrongTypeException;
 
+/**
+ * JsonCompositeImpl
+ * 
+ * This is the meat of the JSON composite implementation - or more or less all the null and
+ * type safety checks we'd have to write otherwise collected in one place.
+ *
+ */
 public final class JsonCompositeImpl implements Composite {
 	private @NonNull ZoneId zoneId;
 	private @NonNull JsonObject object;
