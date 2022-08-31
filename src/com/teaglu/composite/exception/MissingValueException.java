@@ -1,6 +1,6 @@
 /****************************************************************************
- * Copyright (c) 2020, 2021 Teaglu, LLC                                     *
- * All Rights Reserved                                                      *
+ * Copyright (c) 2022 Teaglu, LLC
+ * All Rights Reserved
  ****************************************************************************/
 
 package com.teaglu.composite.exception;
