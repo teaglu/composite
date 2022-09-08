@@ -1,6 +1,17 @@
 /****************************************************************************
- * Copyright (c) 2022 Teaglu, LLC
- * All Rights Reserved
+ * Copyright 2022 Teaglu, LLC                                               *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *   http://www.apache.org/licenses/LICENSE-2.0                             *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
  ****************************************************************************/
 
 package com.teaglu.composite.json;
@@ -14,15 +25,25 @@ import org.eclipse.jdt.annotation.NonNull;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teaglu.composite.Composite;
+import com.teaglu.composite.exception.WrongTypeException;
 
+/**
+ * JsonCompositeMapImpl
+ *
+ * Implementation of an iterable set of map entries that corresponds to all the entries of a
+ * composite.  The entries must all be objects.
+ * 
+ */
 public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull String, @NonNull Composite>> {	
-	private static class ObjectMapIterator implements Iterator<Map.Entry<@NonNull String, @NonNull Composite>> {
-		private Iterator<Map.Entry<String, JsonElement>> iterator;
-		private @NonNull ZoneId zoneId;
+	private class ObjectMapIterator implements Iterator<Map.Entry<@NonNull String, @NonNull Composite>> {
+		private @NonNull Iterator<Map.Entry<@NonNull String, @NonNull JsonElement>> iterator;
 		
-		private ObjectMapIterator(@NonNull JsonObject object, @NonNull ZoneId zoneId) {
-			iterator= object.entrySet().iterator();
-			this.zoneId= zoneId;
+		private ObjectMapIterator(@NonNull JsonObject object) {
+			@SuppressWarnings("null")
+			@NonNull Iterator<Map.Entry<@NonNull String, @NonNull JsonElement>> tmp=
+					object.entrySet().iterator();
+			
+			iterator= tmp;
 		}
 		
 		@Override
@@ -32,21 +53,23 @@ public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull S
 
 		@Override
 		public Map.Entry<@NonNull String, @NonNull Composite> next() {
-			final Map.Entry<String, JsonElement> el= iterator.next();
+			final Map.Entry<@NonNull String, @NonNull JsonElement> el= iterator.next();
 			
 			return new Map.Entry<@NonNull String, @NonNull Composite>() {
-				// Gson doesn't support null annotations, so we have to eat the warning somewhere
-				@SuppressWarnings("null")
 				@Override
 				public @NonNull String getKey() {
-					return el.getKey();
+					@SuppressWarnings("null")
+					@NonNull String key= el.getKey();
+					
+					return key;
 				}
 
-				// Gson doesn't support null annotations, so we have to eat the warning somewhere
-				@SuppressWarnings("null")
 				@Override
 				public @NonNull Composite getValue() {
-					return new JsonCompositeImpl(el.getValue().getAsJsonObject(), zoneId);
+					@SuppressWarnings("null")
+					@NonNull JsonObject obj= el.getValue().getAsJsonObject();
+					
+					return new JsonCompositeImpl(obj, zoneId);
 				}
 
 				@Override
@@ -60,13 +83,26 @@ public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull S
 	private @NonNull JsonObject object;
 	private @NonNull ZoneId zoneId;
 	
-	JsonCompositeMapImpl(@NonNull JsonObject object, @NonNull ZoneId zoneId) {
+	JsonCompositeMapImpl(
+			@NonNull JsonObject object,
+			@NonNull ZoneId zoneId) throws WrongTypeException
+	{
+		// Verify all the entries are objects.  We can't do that in the iterator because the
+		// iterator methods don't have any throw clauses.
+		
+		for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+			JsonElement el= entry.getValue();
+			if (!el.isJsonObject()) {
+				throw new WrongTypeException(entry.getKey(), "Object");
+			}
+		}
+		
 		this.object= object;
 		this.zoneId= zoneId;
 	}
 	
 	@Override
 	public Iterator<Map.Entry<@NonNull String, @NonNull Composite>> iterator() {
-		return new ObjectMapIterator(object, zoneId);
+		return new ObjectMapIterator(object);
 	}
 }

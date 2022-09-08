@@ -1,6 +1,17 @@
 /****************************************************************************
- * Copyright (c) 2022 Teaglu, LLC
- * All Rights Reserved
+ * Copyright 2022 Teaglu, LLC                                               *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *   http://www.apache.org/licenses/LICENSE-2.0                             *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
  ****************************************************************************/
 
 package com.teaglu.composite.json;
@@ -162,7 +173,9 @@ public final class JsonCompositeImpl implements Composite {
 		}
 		
 		
-		@SuppressWarnings("null") @NonNull String rval= pr.getAsString();
+		@SuppressWarnings("null")
+		@NonNull String rval= pr.getAsString();
+		
 		return rval;
 	}
 
@@ -276,7 +289,8 @@ public final class JsonCompositeImpl implements Composite {
 			throw new WrongTypeException(name, "Object");
 		}
 		
-		@SuppressWarnings("null") @NonNull JsonObject rval= el.getAsJsonObject();
+		@SuppressWarnings("null")
+		@NonNull JsonObject rval= el.getAsJsonObject();
 		
 		return new JsonCompositeImpl(rval, zoneId);
 	}
@@ -296,16 +310,9 @@ public final class JsonCompositeImpl implements Composite {
 			
 		@SuppressWarnings("null")
 		@NonNull JsonArray array= el.getAsJsonArray();
-			
-		// We can't throw a wrong type exception from the iterator, so walk the
-		// array now and make sure everything is an object.
-		for (JsonElement testEl : array) {
-			if (!testEl.isJsonObject()) {
-				throw new WrongTypeException(name, "Object[]");
-			}
-		}
-
-		return new JsonCompositeArrayImpl(array, zoneId);
+		
+		// The JsonCompositeArrayImpl construct validated each member is an object
+		return new JsonCompositeArrayImpl(name, array, zoneId);
 	}
 	
 	@Override
@@ -324,29 +331,32 @@ public final class JsonCompositeImpl implements Composite {
 		@NonNull List<@NonNull String> rval= new ArrayList<@NonNull String>();
 		
 		// Flatten to string list
+		int index= 0;
 		for (JsonElement itemEl : array) {
 			if (!itemEl.isJsonPrimitive()) {
-				throw new WrongTypeException(name, "String[]");
+				throw new WrongTypeException(name + "[" + index + "]", "String");
 			}
 			
 			JsonPrimitive itemPr= itemEl.getAsJsonPrimitive();
 			if (!itemPr.isString()) {
-				throw new WrongTypeException(name, "String[]");
+				throw new WrongTypeException(name + "[" + index + "]", "String");
 			}
 			
-			@SuppressWarnings("null") @NonNull String value= itemPr.getAsString();
+			@SuppressWarnings("null")
+			@NonNull String value= itemPr.getAsString();
+			
 			rval.add(value);
+			index++;
 		}
 		
 		return rval;
 	}
 	
-	@SuppressWarnings("null")
 	@Override
 	public @NonNull Iterable<@NonNull Integer> getRequiredIntegerArray(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		List<Integer> rval= new ArrayList<Integer>();
+		List<@NonNull Integer> rval= new ArrayList<>();
 		
 		if (!object.has(name)) {
 			throw new MissingValueException(name);
@@ -354,31 +364,25 @@ public final class JsonCompositeImpl implements Composite {
 
 		JsonElement el= object.get(name);
 		
-		if (el.isJsonPrimitive()) {
-			JsonPrimitive pr= el.getAsJsonPrimitive();
-			if (pr.isNumber()) {
-				rval.add(pr.getAsInt());
-			} else {
-				throw new WrongTypeException(name, "Integer[]");
-			}
-		} else if (el.isJsonArray()) {
-			JsonArray array= el.getAsJsonArray();
-			
-			// Flatten to string list
-			for (JsonElement itemEl : array) {
-				if (!itemEl.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Integer[]");
-				}
-				JsonPrimitive itemPr= itemEl.getAsJsonPrimitive();
-				if (!itemPr.isNumber()) {
-					throw new WrongTypeException(name, "Integer[]");
-				}
-				rval.add(itemPr.getAsInt());
-			}
-		} else {
+		if (!el.isJsonArray()) {
 			throw new WrongTypeException(name, "Integer[]");
+		}		
+		JsonArray array= el.getAsJsonArray();
+			
+		// Flatten to string list
+		int index= 0;
+		for (JsonElement itemEl : array) {
+			if (!itemEl.isJsonPrimitive()) {
+				throw new WrongTypeException(name + "[" + index + "]", "Integer");
+			}
+			JsonPrimitive itemPr= itemEl.getAsJsonPrimitive();
+			if (!itemPr.isNumber()) {
+				throw new WrongTypeException(name + "[" + index + "]", "Integer");
+			}
+			rval.add(itemPr.getAsInt());
+			index++;
 		}
-		
+	
 		return rval;
 	}
 	
@@ -617,7 +621,8 @@ public final class JsonCompositeImpl implements Composite {
 					throw new WrongTypeException(name, "Object");
 				}
 				
-				@SuppressWarnings("null") @NonNull JsonObject ob= el.getAsJsonObject();
+				@SuppressWarnings("null")
+				@NonNull JsonObject ob= el.getAsJsonObject();
 				
 				rval= new JsonCompositeImpl(ob, zoneId);
 			}
@@ -646,17 +651,11 @@ public final class JsonCompositeImpl implements Composite {
 					throw new WrongTypeException(name, "Object[]");
 				}
 				
-				@SuppressWarnings("null") @NonNull JsonArray array= el.getAsJsonArray();
+				@SuppressWarnings("null")
+				@NonNull JsonArray array= el.getAsJsonArray();
 				
-				// We can't throw a wrong type exception from the iterator, so walk the
-				// array now and make sure everything is an object.
-				for (JsonElement testEl : array) {
-					if (!testEl.isJsonObject()) {
-						throw new WrongTypeException(name, "Object[]");
-					}
-				}
-				
-				rval= new JsonCompositeArrayImpl(array, zoneId);
+				// The JsonCompositeArrayImpl construct validated each member is an object
+				rval= new JsonCompositeArrayImpl(name, array, zoneId);
 			}
 		}
 		
@@ -681,18 +680,21 @@ public final class JsonCompositeImpl implements Composite {
 				JsonArray array= el.getAsJsonArray();
 				
 				// Flatten to string list
+				int index= 0;
 				for (JsonElement itemEl : array) {
 					if (!itemEl.isJsonPrimitive()) {
-						throw new WrongTypeException(name, "String[]");
+						throw new WrongTypeException(name + "[" + index + "]", "String");
 					}
 					JsonPrimitive itemPr= itemEl.getAsJsonPrimitive();
 					if (!itemPr.isString()) {
-						throw new WrongTypeException(name, "String[]");
+						throw new WrongTypeException(name + "[" + index + "]", "String");
 					}
 					
-					@SuppressWarnings("null") @NonNull String value= itemPr.getAsString();
+					@SuppressWarnings("null")
+					@NonNull String value= itemPr.getAsString();
 					
 					rval.add(value);
+					index++;
 				}
 			}
 		}
@@ -718,16 +720,18 @@ public final class JsonCompositeImpl implements Composite {
 				JsonArray array= el.getAsJsonArray();
 					
 				// Flatten to string list
+				int index= 0;
 				for (JsonElement itemEl : array) {
 					if (!itemEl.isJsonPrimitive()) {
-						throw new WrongTypeException(name, "Integer[]");
+						throw new WrongTypeException(name + "[" + index + "]", "Integer");
 					}
 					JsonPrimitive itemPr= itemEl.getAsJsonPrimitive();
 					if (!itemPr.isNumber()) {
-						throw new WrongTypeException(name, "Integer[]");
+						throw new WrongTypeException(name + "[" + index + "]", "Integer");
 					}
 
 					rval.add(itemPr.getAsInt());
+					index++;
 				}
 			}
 		}
