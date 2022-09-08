@@ -2,14 +2,27 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.teaglu</groupId>
   <artifactId>com.teaglu.composite</artifactId>
+  <version>1.0.0</version>
+  
+  <name>Composite Library</name>
+  <description>Convenience Library for Structured Data Formats</description>
+  <url>https://github.com/teaglu/composite/</url>
+  
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
-  <version>1.0.0</version>
-
-  <name>Composite Library</name>
+  <scm>
+    <url>https://github.com/teaglu/composite/</url>
+  </scm>
 
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -31,6 +44,7 @@
       </plugin>
     </plugins>
   </build>
+  
   <dependencies>
   	<dependency>
   		<groupId>com.google.code.gson</groupId>
