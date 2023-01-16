@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.teaglu</groupId>
 	<artifactId>com.teaglu.composite</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 
 	<name>Composite Library</name>
 	<description>Convenience Library for Structured Data Formats</description>

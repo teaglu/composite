@@ -28,9 +28,11 @@ import org.postgresql.util.PGobject;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.teaglu.composite.Composite;
+import com.teaglu.composite.exception.ParseException;
 import com.teaglu.composite.exception.WrongTypeException;
 
 /**
@@ -124,14 +126,18 @@ public final class JsonComposite {
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull String data,
-			@NonNull TimeZone timezone) throws WrongTypeException, JsonSyntaxException
+			@NonNull TimeZone timezone) throws ParseException, WrongTypeException
 	{
-		JsonElement element= JsonParser.parseString(data);
-		if (element == null) {
-			throw new JsonSyntaxException("Unable to parse JSON data");
+		try {
+			JsonElement element= JsonParser.parseString(data);
+			if (element == null) {
+				throw new JsonSyntaxException("Unable to parse JSON data");
+			}
+	
+			return Create(element, timezone);
+		} catch (JsonParseException parseException) {
+			throw new ParseException("Error parsing JSON input", parseException);
 		}
-
-		return Create(element, timezone);
 	}
 	
 	/**
@@ -147,7 +153,7 @@ public final class JsonComposite {
 	 * @throws JsonSyntaxException
 	 */
 	public static @NonNull Composite Parse(
-			@NonNull String data) throws WrongTypeException, JsonSyntaxException
+			@NonNull String data) throws ParseException, WrongTypeException
 	{
 		return Parse(data, defaultTimezone);
 	}
@@ -167,14 +173,18 @@ public final class JsonComposite {
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull InputStreamReader reader,
-			@NonNull TimeZone timezone) throws WrongTypeException, JsonSyntaxException
+			@NonNull TimeZone timezone) throws ParseException, WrongTypeException
 	{
-		JsonElement element= JsonParser.parseReader(reader);
-		if (element == null) {
-			throw new JsonSyntaxException("Unable to parse JSON data");
+		try {
+			JsonElement element= JsonParser.parseReader(reader);
+			if (element == null) {
+				throw new JsonSyntaxException("Unable to parse JSON data");
+			}
+	
+			return Create(element, timezone);
+		} catch (JsonParseException parseException) {
+			throw new ParseException("Error parsing JSON input", parseException);
 		}
-
-		return Create(element, timezone);
 	}
 	
 	/**
@@ -191,7 +201,7 @@ public final class JsonComposite {
 	 * @throws JsonSyntaxException
 	 */
 	public static @NonNull Composite Parse(
-			@NonNull InputStreamReader reader) throws WrongTypeException, JsonSyntaxException
+			@NonNull InputStreamReader reader) throws ParseException, WrongTypeException
 	{
 		return Parse(reader, defaultTimezone);
 	}
@@ -210,7 +220,7 @@ public final class JsonComposite {
 	 */
 	public static @Nullable Composite ParseObject(
 			@Nullable PGobject pgObject,
-			@NonNull TimeZone timezone) throws WrongTypeException
+			@NonNull TimeZone timezone) throws ParseException, WrongTypeException
 	{
 		Composite rval= null;
 		
@@ -236,7 +246,7 @@ public final class JsonComposite {
 	 * @throws WrongTypeException
 	 */
 	public static @Nullable Composite ParseObject(
-			@Nullable PGobject pgObject) throws WrongTypeException
+			@Nullable PGobject pgObject) throws ParseException, WrongTypeException
 	{
 		return ParseObject(pgObject, defaultTimezone);
 	}
@@ -255,29 +265,33 @@ public final class JsonComposite {
 	 */
 	public static @NonNull List<@NonNull Composite> ParseArray(
 			@Nullable PGobject pgObject,
-			@NonNull TimeZone timezone) throws WrongTypeException
+			@NonNull TimeZone timezone) throws ParseException, WrongTypeException
 	{
-		List<@NonNull Composite> rval= new ArrayList<>();
-		
-		if (pgObject != null) {
-			String value= pgObject.getValue();
-			if ((value != null) && !value.equals("null")) {
-				JsonElement element= JsonParser.parseString(pgObject.getValue());
-				
-				if (element.isJsonObject()) {
-					rval.add(Create(element, timezone));
-				} else if (element.isJsonArray()) {
-					for (JsonElement subElement : element.getAsJsonArray()) {
-						@SuppressWarnings("null")
-						@NonNull JsonElement requiredSubElement= subElement;
-						
-						rval.add(Create(requiredSubElement, timezone));
+		try {
+			List<@NonNull Composite> rval= new ArrayList<>();
+			
+			if (pgObject != null) {
+				String value= pgObject.getValue();
+				if ((value != null) && !value.equals("null")) {
+					JsonElement element= JsonParser.parseString(pgObject.getValue());
+					
+					if (element.isJsonObject()) {
+						rval.add(Create(element, timezone));
+					} else if (element.isJsonArray()) {
+						for (JsonElement subElement : element.getAsJsonArray()) {
+							@SuppressWarnings("null")
+							@NonNull JsonElement requiredSubElement= subElement;
+							
+							rval.add(Create(requiredSubElement, timezone));
+						}
 					}
 				}
 			}
+			
+			return rval;
+		} catch (JsonParseException parseException) {
+			throw new ParseException("Error parsing JSON", parseException);
 		}
-		
-		return rval;
 	}
 	
 	/**
@@ -292,7 +306,7 @@ public final class JsonComposite {
 	 * @throws WrongTypeException
 	 */
 	public static @Nullable List<@NonNull Composite> ParseArray(
-			@Nullable PGobject pgObject) throws WrongTypeException
+			@Nullable PGobject pgObject) throws ParseException, WrongTypeException
 	{
 		return ParseArray(pgObject, defaultTimezone);
 	}
