@@ -47,7 +47,7 @@ public final class JsonCompositeImpl implements Composite {
 	private @NonNull ZoneId zoneId;
 	private @NonNull JsonObject object;
 
-	JsonCompositeImpl(@NonNull JsonObject object, @NonNull ZoneId zoneId) {
+	public JsonCompositeImpl(@NonNull JsonObject object, @NonNull ZoneId zoneId) {
 		this.object= object;
 		this.zoneId= zoneId;
 	}

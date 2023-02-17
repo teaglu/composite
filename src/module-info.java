@@ -19,6 +19,7 @@ module com.teaglu.composite {
 	requires transitive java.sql;
 	requires transitive com.google.gson;
 	requires transitive org.postgresql.jdbc;
+	requires org.yaml.snakeyaml;
 	
 	exports com.teaglu.composite;
 	exports com.teaglu.composite.exception;
