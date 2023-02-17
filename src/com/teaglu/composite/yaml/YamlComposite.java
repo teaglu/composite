@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.postgresql.util.PGobject;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -62,18 +60,17 @@ public class YamlComposite {
 	}
 	
 	/**
-	 * Create
+	 * Parse
 	 * 
-	 * Create a Composite from a JsonElement.  Throws WrongTypeException if the underlying
-	 * JSON element is not an object.
+	 * Parse a text string as YAML and return a composite
 	 *
-	 * @param element					JSON element
+	 * @param text						Text
 	 * @param timezone					Timezone for interpretation
 	 * 
 	 * @return							New Composite
 	 * 
 	 * @throws WrongTypeException
-	 * @throws YamlParseException 
+	 * @throws ParseException 
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull String text,
@@ -95,17 +92,16 @@ public class YamlComposite {
 	}
 	
 	/**
-	 * Create
+	 * Parse
 	 * 
-	 * Create a Composite from a JsonElement using the UTC timezone.  Throws WrongTypeException
-	 * if the underlying JSON element is not an object.
+	 * Parse a text string to YAML and return a composite, using the default timezone
 	 *
-	 * @param element					JSON element
+	 * @param text						Text
 	 * 
 	 * @return							New Composite
 	 * 
 	 * @throws WrongTypeException
-	 * @throws YamlParseException 
+	 * @throws ParseException 
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull String text) throws WrongTypeException, ParseException
@@ -113,6 +109,19 @@ public class YamlComposite {
 		return Parse(text, defaultTimezone);
 	}
 	
+	/**
+	 * Parse
+	 * 
+	 * Parse an input stream as YAML and return a composite
+	 *
+	 * @param reader					Input stream reader
+	 * @param timezone					Timezone for interpretation
+	 * 
+	 * @return							New Composite
+	 * 
+	 * @throws WrongTypeException
+	 * @throws ParseException 
+	 */
 	public static @NonNull Composite Parse(
 			@NonNull InputStreamReader reader,
 			@NonNull TimeZone timezone) throws WrongTypeException, ParseException
@@ -132,54 +141,21 @@ public class YamlComposite {
 		return new MapCompositeImpl(tree, timezone, SerializerHolder.serializer, null);
 	}
 	
+	/**
+	 * Parse
+	 * 
+	 * Parse an input stream as YAML and return a composite, using the default timezone
+	 *
+	 * @param reader					Input stream reader
+	 * 
+	 * @return							New Composite
+	 * 
+	 * @throws WrongTypeException
+	 * @throws ParseException 
+	 */
 	public static @NonNull Composite Parse(
 			@NonNull InputStreamReader reader) throws WrongTypeException, ParseException
 	{
 		return Parse(reader, defaultTimezone);
-	}
-
-	/**
-	 * ParseObject
-	 * 
-	 * Parse a Postgres PGobject from a JSON column and create an object
-	 *
-	 * @param pgObject					Object from JDBC getObject()
-	 * @param timezone					Timezone for interpretation
-	 * 
-	 * @return							Composite object
-	 * 
-	 * @throws WrongTypeException
-	 */
-	public static @Nullable Composite ParseObject(
-			@Nullable PGobject pgObject,
-			@NonNull TimeZone timezone) throws ParseException, WrongTypeException
-	{
-		Composite rval= null;
-		
-		if (pgObject != null) {
-			String value= pgObject.getValue();
-			if ((value != null) && !value.equals("null")) {
-				rval= Parse(value, timezone);
-			}
-		}
-		
-		return rval;
-	}
-	
-	/**
-	 * ParseObject
-	 * 
-	 * Parse a Postgres PGobject from a JSON column and create an object
-	 *
-	 * @param pgObject					Object from JDBC getObject()
-	 * 
-	 * @return							Composite object
-	 * 
-	 * @throws WrongTypeException
-	 */
-	public static @Nullable Composite ParseObject(
-			@Nullable PGobject pgObject) throws ParseException, WrongTypeException
-	{
-		return ParseObject(pgObject, defaultTimezone);
 	}
 }
