@@ -17,7 +17,6 @@
 package com.teaglu.composite.json;
 
 import java.io.InputStreamReader;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -87,10 +86,7 @@ public final class JsonComposite {
 		@SuppressWarnings("null")
 		@NonNull JsonObject object= element.getAsJsonObject();
 		
-		@SuppressWarnings("null")
-		@NonNull ZoneId zoneId= timezone.toZoneId();
-		
-		return new JsonCompositeImpl(object, zoneId);
+		return new JsonCompositeImpl(object, timezone, null);
 	}
 	
 	/**

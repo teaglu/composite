@@ -16,9 +16,9 @@
 
 package com.teaglu.composite.json;
 
-import java.time.ZoneId;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -53,23 +53,27 @@ public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull S
 
 		@Override
 		public Map.Entry<@NonNull String, @NonNull Composite> next() {
-			final Map.Entry<@NonNull String, @NonNull JsonElement> el= iterator.next();
+			final Map.Entry<@NonNull String, @NonNull JsonElement> entry= iterator.next();
+			
+			@SuppressWarnings("null") final String name= entry.getKey();
+			@SuppressWarnings("null") final JsonElement element= entry.getValue();
+			
+			if (!element.isJsonObject()) {
+				throw new RuntimeException("Map entry is not an object");
+			}
+			
+			@SuppressWarnings("null")
+			final @NonNull JsonObject object= element.getAsJsonObject();
 			
 			return new Map.Entry<@NonNull String, @NonNull Composite>() {
 				@Override
 				public @NonNull String getKey() {
-					@SuppressWarnings("null")
-					@NonNull String key= el.getKey();
-					
-					return key;
+					return name;
 				}
 
 				@Override
 				public @NonNull Composite getValue() {
-					@SuppressWarnings("null")
-					@NonNull JsonObject obj= el.getValue().getAsJsonObject();
-					
-					return new JsonCompositeImpl(obj, zoneId);
+					return new JsonCompositeImpl(object, timezone, prefix + name);
 				}
 
 				@Override
@@ -81,11 +85,13 @@ public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull S
 	}
 	
 	private @NonNull JsonObject object;
-	private @NonNull ZoneId zoneId;
+	private @NonNull TimeZone timezone;
+	private @NonNull String prefix;
 	
 	JsonCompositeMapImpl(
 			@NonNull JsonObject object,
-			@NonNull ZoneId zoneId) throws WrongTypeException
+			@NonNull TimeZone timezone,
+			@NonNull String prefix) throws WrongTypeException
 	{
 		// Verify all the entries are objects.  We can't do that in the iterator because the
 		// iterator methods don't have any throw clauses.
@@ -98,7 +104,8 @@ public final class JsonCompositeMapImpl implements Iterable<Map.Entry<@NonNull S
 		}
 		
 		this.object= object;
-		this.zoneId= zoneId;
+		this.timezone= timezone;
+		this.prefix= prefix;
 	}
 	
 	@Override

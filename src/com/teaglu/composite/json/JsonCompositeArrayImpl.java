@@ -16,8 +16,9 @@
 
 package com.teaglu.composite.json;
 
-import java.time.ZoneId;
 import java.util.Iterator;
+import java.util.TimeZone;
+
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.JsonArray;
@@ -34,6 +35,7 @@ import com.teaglu.composite.exception.WrongTypeException;
 public final class JsonCompositeArrayImpl implements Iterable<@NonNull Composite> {
 	public class JsonArrayIterator implements Iterator<@NonNull Composite>  {
 		private @NonNull Iterator<@NonNull JsonElement> iterator;
+		private int index= 0;
 		
 		JsonArrayIterator()
 		{
@@ -56,17 +58,21 @@ public final class JsonCompositeArrayImpl implements Iterable<@NonNull Composite
 			@SuppressWarnings("null")
 			@NonNull JsonObject ob= el.getAsJsonObject();
 			
-			return new JsonCompositeImpl(ob, zoneId);
+			int position= index++;
+			
+			return new JsonCompositeImpl(ob, timezone, path + "[" + position + "]");
 		}
 	}
 	
 	private @NonNull JsonArray array;
-	private @NonNull ZoneId zoneId;
+	private @NonNull String path;
+	private @NonNull TimeZone timezone;
 	
 	JsonCompositeArrayImpl(
 			@NonNull String name,
 			@NonNull JsonArray array,
-			@NonNull ZoneId zoneId) throws WrongTypeException
+			@NonNull TimeZone timezone,
+			@NonNull String path) throws WrongTypeException
 	{
 		// Verify all the entries are objects.  We can't do that in the iterator because the
 		// iterator methods don't have any throw clauses.
@@ -80,7 +86,8 @@ public final class JsonCompositeArrayImpl implements Iterable<@NonNull Composite
 		}
 		
 		this.array= array;
-		this.zoneId= zoneId;
+		this.timezone= timezone;
+		this.path= path;
 	}
 	
 	@Override

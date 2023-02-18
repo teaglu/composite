@@ -19,12 +19,13 @@ package com.teaglu.composite.json;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -44,12 +45,19 @@ import com.teaglu.composite.exception.WrongTypeException;
  *
  */
 public final class JsonCompositeImpl implements Composite {
-	private @NonNull ZoneId zoneId;
+	private @NonNull String prefix;
+	private @NonNull TimeZone timezone;
 	private @NonNull JsonObject object;
 
-	public JsonCompositeImpl(@NonNull JsonObject object, @NonNull ZoneId zoneId) {
+	public JsonCompositeImpl(@NonNull JsonObject object, @NonNull TimeZone timezone, @Nullable String path) {
 		this.object= object;
-		this.zoneId= zoneId;
+		this.timezone= timezone;
+		
+		if (path == null) {
+			prefix= "";
+		} else {
+			prefix= path + ".";
+		}
 	}
 	
 	@Deprecated
@@ -61,329 +69,132 @@ public final class JsonCompositeImpl implements Composite {
 	public int getRequiredInteger(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		int rval= 0;
-		
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
-		}
-		
-		JsonElement el= object.get(name);
-
-		if (!el.isJsonPrimitive()) {
-			throw new WrongTypeException(name, "Integer");
-		}
-		
-		JsonPrimitive pr= el.getAsJsonPrimitive();
-		if (pr.isNumber()) {
-			rval= pr.getAsInt();
-		} else if (pr.isString()) {
-			try {
-				rval= Integer.parseInt(pr.getAsString());
-			} catch (NumberFormatException e) {
-				throw new WrongTypeException(name, "Integer");
-			}
-		} else {
-			throw new WrongTypeException(name, "Integer");
+		Integer value= getOptionalInteger(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
 
-		return rval;
+		return value;
 	}
 	
 	@Override
 	public long getRequiredLong(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		long rval= 0;
-		
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
-		}
-		
-		JsonElement el= object.get(name);
-
-		if (!el.isJsonPrimitive()) {
-			throw new WrongTypeException(name, "Long");
-		}
-		
-		JsonPrimitive pr= el.getAsJsonPrimitive();
-		if (pr.isNumber()) {
-			rval= pr.getAsLong();
-		} else if (pr.isString()) {
-			try {
-				rval= Long.parseLong(pr.getAsString());
-			} catch (NumberFormatException e) {
-				throw new WrongTypeException(name, "Long");
-			}
-		} else {
-			throw new WrongTypeException(name, "Long");
+		Long value= getOptionalLong(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
 
-		return rval;
+		return value;
 	}
 	
 	@Override
 	public double getRequiredDouble(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		double rval= 0;
-		
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
+		Double value= getOptionalDouble(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
-		
-		JsonElement el= object.get(name);
 
-		if (!el.isJsonPrimitive()) {
-			throw new WrongTypeException(name, "Double");
-		}
-		
-		JsonPrimitive pr= el.getAsJsonPrimitive();
-		if (pr.isNumber()) {
-			rval= pr.getAsDouble();
-		} else if (pr.isString()) {
-			try {
-				rval= Double.parseDouble(pr.getAsString());
-			} catch (NumberFormatException e) {
-				throw new WrongTypeException(name, "Double");
-			}
-		} else {
-			throw new WrongTypeException(name, "Double");
-		}
-		
-		return rval;
+		return value;
 	}
 
 	@Override
 	public @NonNull String getRequiredString(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
+		String value= getOptionalString(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
-		
-		JsonElement el= object.get(name);
 
-		if (!el.isJsonPrimitive()) {
-			throw new WrongTypeException(name, "String");
-		}
-		
-		JsonPrimitive pr= el.getAsJsonPrimitive();
-		if (!pr.isString()) {
-			throw new WrongTypeException(name, "String");
-		}
-		
-		
-		@SuppressWarnings("null")
-		@NonNull String rval= pr.getAsString();
-		
-		return rval;
+		return value;
 	}
 
 	@Override
 	public boolean getRequiredBoolean(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
+		Boolean value= getOptionalBoolean(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
-		
-		JsonElement el= object.get(name);
 
-		if (!el.isJsonPrimitive()) {
-			throw new WrongTypeException(name, "Boolean");
-		}
-		
-		JsonPrimitive pr= el.getAsJsonPrimitive();
-		if (!pr.isBoolean()) {
-			throw new WrongTypeException(name, "Boolean");
-		}
-		
-		return pr.getAsBoolean();
+		return value;
 	}
 
 	@Override
 	public @NonNull LocalDate getRequiredLocalDate(
 			@NonNull String name) throws WrongTypeException, MissingValueException, FormatException
 	{
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
-		}
-		
-		JsonElement el= object.get(name);
-		if (!el.isJsonPrimitive()) {
-			throw new WrongTypeException(name, "Date");
-		}
-		
-		JsonPrimitive pr= el.getAsJsonPrimitive();
-		if (!pr.isString()) {
-			throw new WrongTypeException(name, "Date");
+		LocalDate value= getOptionalLocalDate(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
 
-		String value= pr.getAsString();
-
-		try {
-			LocalDate rval= LocalDate.parse(value);
-			
-			if (rval == null) {
-				throw new RuntimeException("LocalDate parse returned null, which is disallowed by spec");
-			}
-			
-			return rval;
-		} catch (NumberFormatException e) {
-			throw new FormatException("Unable to parse " + name + " value '" + value + "' to a LocalDate");
-		}
+		return value;
 	}
 
 	@Override
 	public @NonNull Timestamp getRequiredTimestamp(
 			@NonNull String name) throws WrongTypeException, MissingValueException, FormatException
 	{
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
-		}
-		
-		JsonElement el= object.get(name);
-		if (!el.isJsonPrimitive()) {
-			throw new WrongTypeException(name, "Date");
-		}
-		
-		JsonPrimitive pr= el.getAsJsonPrimitive();
-		if (!pr.isString()) {
-			throw new WrongTypeException(name, "Date");
+		Timestamp value= getOptionalTimestamp(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
 
-		String value= pr.getAsString();
-
-		Timestamp rval= null;
-		try {
-			int timePart= value.indexOf('T');
-			if (timePart != -1) {
-				OffsetDateTime odt= OffsetDateTime.parse(value);
-				rval= Timestamp.from(odt.toInstant());
-			} else {
-				// If we get a string without a time part, use 00:00:00 in timezone passed on creation
-				LocalDate lt= LocalDate.parse(value);
-				rval= Timestamp.from(lt.atStartOfDay(zoneId).toInstant());
-			}
-			
-			if (rval == null) {
-				throw new RuntimeException("Timestamp parse returned null, which is disallowed by spec");
-			}
-
-			return rval;
-		} catch (NumberFormatException e) {
-			throw new FormatException("Unable to parse " + name + " value '" + value + "' into Timestamp");
-		}
+		return value;
 	}
 
 	@Override
 	public @NonNull Composite getRequiredObject(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
+		Composite value= getOptionalObject(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
-		
-		JsonElement el= object.get(name);
-		if (!el.isJsonObject()) {
-			throw new WrongTypeException(name, "Object");
-		}
-		
-		@SuppressWarnings("null")
-		@NonNull JsonObject rval= el.getAsJsonObject();
-		
-		return new JsonCompositeImpl(rval, zoneId);
+
+		return value;
 	}
 
 	@Override
 	public @NonNull Iterable<@NonNull Composite> getRequiredObjectArray(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
+		Iterable<@NonNull Composite> value= getOptionalObjectArray(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
 		
-		JsonElement el= object.get(name);
-		if (!el.isJsonArray()) {
-			throw new WrongTypeException(name, "Object[]");
-		}
-			
-		@SuppressWarnings("null")
-		@NonNull JsonArray array= el.getAsJsonArray();
-		
-		// The JsonCompositeArrayImpl construct validated each member is an object
-		return new JsonCompositeArrayImpl(name, array, zoneId);
+		return value;
 	}
 	
 	@Override
 	public @NonNull Iterable<@NonNull String> getRequiredStringArray(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		JsonElement el= object.get(name);
-		if (el == null) {
-			throw new MissingValueException(name);
-		}
-		if (!el.isJsonArray()) {
-			throw new WrongTypeException(name, "String[]");
+		Iterable<@NonNull String> value= getOptionalStringArray(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
 		
-		JsonArray array= el.getAsJsonArray();
-		@NonNull List<@NonNull String> rval= new ArrayList<@NonNull String>();
-		
-		// Flatten to string list
-		int index= 0;
-		for (JsonElement itemEl : array) {
-			if (!itemEl.isJsonPrimitive()) {
-				throw new WrongTypeException(name + "[" + index + "]", "String");
-			}
-			
-			JsonPrimitive itemPr= itemEl.getAsJsonPrimitive();
-			if (!itemPr.isString()) {
-				throw new WrongTypeException(name + "[" + index + "]", "String");
-			}
-			
-			@SuppressWarnings("null")
-			@NonNull String value= itemPr.getAsString();
-			
-			rval.add(value);
-			index++;
-		}
-		
-		return rval;
+		return value;
 	}
 	
 	@Override
 	public @NonNull Iterable<@NonNull Integer> getRequiredIntegerArray(
 			@NonNull String name) throws WrongTypeException, MissingValueException
 	{
-		List<@NonNull Integer> rval= new ArrayList<>();
-		
-		if (!object.has(name)) {
-			throw new MissingValueException(name);
+		Iterable<@NonNull Integer> value= getOptionalIntegerArray(name);
+		if (value == null) {
+			throw new MissingValueException(prefix + name);
 		}
-
-		JsonElement el= object.get(name);
 		
-		if (!el.isJsonArray()) {
-			throw new WrongTypeException(name, "Integer[]");
-		}		
-		JsonArray array= el.getAsJsonArray();
-			
-		// Flatten to string list
-		int index= 0;
-		for (JsonElement itemEl : array) {
-			if (!itemEl.isJsonPrimitive()) {
-				throw new WrongTypeException(name + "[" + index + "]", "Integer");
-			}
-			JsonPrimitive itemPr= itemEl.getAsJsonPrimitive();
-			if (!itemPr.isNumber()) {
-				throw new WrongTypeException(name + "[" + index + "]", "Integer");
-			}
-			rval.add(itemPr.getAsInt());
-			index++;
-		}
-	
-		return rval;
+		return value;
 	}
 	
 	@Override
@@ -394,19 +205,27 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Integer");
+					throw new WrongTypeException(prefix + name, "integer");
 				}
+				
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 				if (pr.isNumber()) {
-					rval= pr.getAsInt();
+					int i= pr.getAsInt();
+					double d= pr.getAsDouble();
+					
+					if (d != (double)i) {
+						throw new WrongTypeException(prefix + name, "integer");
+					}
+					
+					rval= i;
 				} else if (pr.isString()) {
 					try {
 						rval= Integer.parseInt(pr.getAsString());
 					} catch (NumberFormatException e) {
-						throw new WrongTypeException(name, "Integer");
+						throw new WrongTypeException(prefix + name, "integer");
 					}
 				} else {
-					throw new WrongTypeException(name, "Integer");
+					throw new WrongTypeException(prefix + name, "integer");
 				}
 			}
 		}
@@ -422,19 +241,26 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Long");
+					throw new WrongTypeException(prefix + name, "long");
 				}
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 				if (pr.isNumber()) {
-					rval= pr.getAsLong();
+					long l= pr.getAsInt();
+					double d= pr.getAsDouble();
+					
+					if (d != (double)l) {
+						throw new WrongTypeException(prefix + name, "long");
+					}
+					
+					rval= l;
 				} else if (pr.isString()) {
 					try {
 						rval= Long.parseLong(pr.getAsString());
 					} catch (NumberFormatException e) {
-						throw new WrongTypeException(name, "Long");
+						throw new WrongTypeException(prefix + name, "long");
 					}
 				} else {
-					throw new WrongTypeException(name, "Long");
+					throw new WrongTypeException(prefix + name, "long");
 				}
 			}
 		}
@@ -450,7 +276,7 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Double");
+					throw new WrongTypeException(prefix + name, "double");
 				}
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 				if (pr.isNumber()) {
@@ -459,10 +285,10 @@ public final class JsonCompositeImpl implements Composite {
 					try {
 						rval= Double.parseDouble(pr.getAsString());
 					} catch (NumberFormatException e) {
-						throw new WrongTypeException(name, "Double");
+						throw new WrongTypeException(prefix + name, "double");
 					}
 				} else {
-					throw new WrongTypeException(name, "Double"); 
+					throw new WrongTypeException(prefix + name, "double"); 
 				}
 			}
 		}
@@ -478,12 +304,12 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "String");
+					throw new WrongTypeException(prefix + name, "string");
 				}
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 
 				if (!pr.isString()) {
-					throw new WrongTypeException(name, "String");
+					throw new WrongTypeException(prefix + name, "string");
 				}
 
 				rval= pr.getAsString();
@@ -501,11 +327,11 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Boolean");
+					throw new WrongTypeException(prefix + name, "boolean");
 				}
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 				if (!pr.isBoolean()) {
-					throw new WrongTypeException(name, "Boolean");
+					throw new WrongTypeException(prefix + name, "boolean");
 				}
 
 				rval= pr.getAsBoolean();
@@ -520,24 +346,12 @@ public final class JsonCompositeImpl implements Composite {
 			@NonNull String name,
 			boolean defaultVal) throws WrongTypeException
 	{
-		boolean rval= defaultVal;
-		
-		if (object.has(name)) {
-			JsonElement el= object.get(name);
-			if (!el.isJsonNull()) {
-				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Boolean");
-				}
-				JsonPrimitive pr= el.getAsJsonPrimitive();
-				if (!pr.isBoolean()) {
-					throw new WrongTypeException(name, "Boolean");
-				}
-
-				rval= pr.getAsBoolean();
-			}
+		Boolean value= getOptionalBoolean(name);
+		if (value == null) {
+			value= defaultVal;
 		}
 		
-		return rval;
+		return value;
 	}
 
 	@Override
@@ -550,11 +364,11 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Date");
+					throw new WrongTypeException(prefix + name, "date");
 				}
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 				if (!pr.isString()) {
-					throw new WrongTypeException(name, "Date");
+					throw new WrongTypeException(prefix + name, "date");
 				}
 
 				String value= pr.getAsString();
@@ -581,25 +395,25 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonPrimitive()) {
-					throw new WrongTypeException(name, "Timestamp");
+					throw new WrongTypeException(prefix + name, "timestamp");
 				}
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 				if (!pr.isString()) {
-					throw new WrongTypeException(name, "Timestamp");
+					throw new WrongTypeException(prefix + name, "timestamp");
 				}
 
 				String value= pr.getAsString();
 				
 				try {
-				int timePart= value.indexOf('T');
-				if (timePart != -1) {
-					OffsetDateTime odt= OffsetDateTime.parse(value);
-					rval= Timestamp.from(odt.toInstant());
-				} else {
-					// If we get a string without a time part, use 00:00:00 in timezone passed on creation
-					LocalDate lt= LocalDate.parse(value);
-					rval= Timestamp.from(lt.atStartOfDay(zoneId).toInstant());
-				}
+					int timePart= value.indexOf('T');
+					if (timePart != -1) {
+						OffsetDateTime odt= OffsetDateTime.parse(value);
+						rval= Timestamp.from(odt.toInstant());
+					} else {
+						// If we get a string without a time part, use 00:00:00 in timezone passed on creation
+						LocalDate lt= LocalDate.parse(value);
+						rval= Timestamp.from(lt.atStartOfDay(timezone.toZoneId()).toInstant());
+					}
 				} catch (NumberFormatException e) {
 					throw new FormatException("Unable to parse " + name + " value '" +
 							value + "' into LocalDate");
@@ -618,13 +432,13 @@ public final class JsonCompositeImpl implements Composite {
 			JsonElement el= object.get(name);
 			if (!el.isJsonNull()) {
 				if (!el.isJsonObject()) {
-					throw new WrongTypeException(name, "Object");
+					throw new WrongTypeException(name, "object");
 				}
 				
 				@SuppressWarnings("null")
 				@NonNull JsonObject ob= el.getAsJsonObject();
 				
-				rval= new JsonCompositeImpl(ob, zoneId);
+				rval= new JsonCompositeImpl(ob, timezone, prefix + name);
 			}
 		}
 		
@@ -635,7 +449,7 @@ public final class JsonCompositeImpl implements Composite {
 	public @NonNull Iterable<Map.Entry<@NonNull String, @NonNull Composite>> getObjectMap(
 			) throws WrongTypeException
 	{
-		return new JsonCompositeMapImpl(object, zoneId);
+		return new JsonCompositeMapImpl(object, timezone, prefix);
 	}
 	
 	@Override
@@ -655,7 +469,7 @@ public final class JsonCompositeImpl implements Composite {
 				@NonNull JsonArray array= el.getAsJsonArray();
 				
 				// The JsonCompositeArrayImpl construct validated each member is an object
-				rval= new JsonCompositeArrayImpl(name, array, zoneId);
+				rval= new JsonCompositeArrayImpl(name, array, timezone, prefix);
 			}
 		}
 		
