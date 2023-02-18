@@ -378,8 +378,26 @@ public class MapCompositeImpl implements Composite {
 	public Composite getOptionalObject(
 			@NonNull String name) throws WrongTypeException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Object value= members.get(name);
+		if (value == null) {
+			return null;
+		} else {
+			if (!(value instanceof Map)) {
+				throw new WrongTypeException(prefix + name, "object");
+			}
+			
+			@SuppressWarnings("unchecked")
+			Map<String, Object> mapValue= (Map<String, Object>)value;
+			
+			try {
+				// Poke the map to make sure it uses string as a key
+				mapValue.get("test");
+				
+				return new MapCompositeImpl(mapValue, timezone, serializer, prefix + name);
+			} catch (ClassCastException compareException) {
+				throw new WrongTypeException(prefix + name, "string map");
+			}
+		}
 	}
 
 	@Override
