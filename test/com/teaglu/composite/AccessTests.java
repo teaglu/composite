@@ -18,6 +18,7 @@ import com.teaglu.composite.exception.SchemaException;
 import com.teaglu.composite.json.JsonCompositeImpl;
 import com.teaglu.composite.map.MapCompositeImpl;
 import com.teaglu.composite.map.MapSerializer;
+import com.teaglu.composite.yaml.YamlComposite;
 
 public class AccessTests {
 	private static class DummySerializer implements MapSerializer {
@@ -249,9 +250,7 @@ public class AccessTests {
 			fail("Exception retrieving non-existant optional item");
 		}
 	}
-	
 
-	
 	private void testDouble(@NonNull Composite c) {
 		try {
 			if (c.getRequiredInteger("doubleProperty1") != 3) {
@@ -636,5 +635,49 @@ public class AccessTests {
 		testObjectList(c);
 		testIntList(c);
 		testStringList(c);
+	}
+	
+	@Test
+	public void testYaml() {
+		List<String> lines= new ArrayList<>(20);
+		
+		lines.add("intProperty: 3");
+		lines.add("longProperty: 3");
+		lines.add("stringProperty: stuff");
+		lines.add("doubleProperty1: 3.0");
+		lines.add("doubleProperty2: 3.4");
+		lines.add("localDateProperty: 2023-01-01");
+		lines.add("timestampProperty: 2023-01-01T12:00:00Z");
+		lines.add("intListProperty:");
+		lines.add("  - 3");
+		lines.add("stringListProperty:");
+		lines.add("  - stuff");
+		lines.add("objectListProperty:");
+		lines.add("  - stuff: things");
+		lines.add("objectProperty:");
+		lines.add("  entry1:");
+		lines.add("    stuff: things");	// YAML doesn't create object without members
+		lines.add("  entry2:");
+		lines.add("    stuff: things");
+
+		@SuppressWarnings("null")
+		@NonNull String text= String.join("\n", lines);
+		
+		try {
+			Composite c= YamlComposite.Parse(text);
+			
+			testInteger(c);
+			testLong(c);
+			testDouble(c);
+			testString(c);
+			
+			testObject(c);
+			
+			testObjectList(c);
+			testIntList(c);
+			testStringList(c);
+		} catch (SchemaException e) {
+			fail("Failed parsing YAML", e);
+		}
 	}
 }
