@@ -100,6 +100,21 @@ public final class MapCompositeMapImpl implements Iterable<Map.Entry<@NonNull St
 		this.timezone= timezone;
 		this.serializer= serializer;
 		this.prefix= prefix;
+		
+		// Pre-scan the entry set to make sure it's only objects, since we can only throw an
+		// unchecked exception from the iterator.
+		for (Map.Entry<String, Object> entry : members.entrySet()) {
+			String name= entry.getKey();
+			Object value= entry.getValue();
+			
+			if (value == null) {
+				throw new WrongTypeException(prefix + name, "object");
+			}
+			
+			if (!(value instanceof Map)) {
+				throw new WrongTypeException(prefix + name, "object");
+			}
+		}
 	}
 	
 	@Override

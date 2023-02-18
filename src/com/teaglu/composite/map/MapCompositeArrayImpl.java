@@ -79,9 +79,11 @@ public final class MapCompositeArrayImpl implements Iterable<@NonNull Composite>
 		
 		int index= 0;
 		for (Object object : iterable) {
-			if (!(object instanceof Map<?, ?>)) {
-				throw new WrongTypeException(
-						path + "[" + index + "]", "Map<String, Object>");
+			if (object == null) {
+				throw new WrongTypeException(path + "[" + index + "]", "object");
+			}
+			if (!(object instanceof Map)) {
+				throw new WrongTypeException(path + "[" + index + "]", "object");
 			}
 		}
 		
