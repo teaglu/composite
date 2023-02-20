@@ -79,18 +79,18 @@ It can be created by parsing a JSON source, passed in as a literal or read from 
 Finally, it can be directly passed a PGobject to parse a Postgres JSONB column:
 
     public static @Nullable Composite ParseObject(
-			@Nullable PGobject pgObject) throws SchemaException;
+        @Nullable PGobject pgObject) throws SchemaException;
 			
     public static @Nullable Composite ParseObject(
-			@Nullable PGobject pgObject,
-			@NonNull TimeZone timezone) throws SchemaException;
+        @Nullable PGobject pgObject,
+        @NonNull TimeZone timezone) throws SchemaException;
 			
     public static @NonNull List<@Nullable Composite> ParseArray(
-			@Nullable PGobject pgObject) throws SchemaException;
+        @Nullable PGobject pgObject) throws SchemaException;
 			
     public static @NonNull List<@Nullable Composite> ParseArray(
-			@Nullable PGobject pgObject,
-			@NonNull TimeZone timezone) throws SchemaException;
+        @Nullable PGobject pgObject,
+        @NonNull TimeZone timezone) throws SchemaException;
         
 ### Creating a YAML Instance
 
