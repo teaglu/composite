@@ -2,108 +2,20 @@ package com.teaglu.composite;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.jupiter.api.Test;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.teaglu.composite.exception.MissingValueException;
 import com.teaglu.composite.exception.SchemaException;
-import com.teaglu.composite.json.JsonCompositeImpl;
-import com.teaglu.composite.map.MapCompositeImpl;
-import com.teaglu.composite.map.MapSerializer;
-import com.teaglu.composite.yaml.YamlComposite;
 
-public class AccessTests {
-	private static class DummySerializer implements MapSerializer {
-		@Override
-		public <Representation> @NonNull Representation serialize(
-				@NonNull Map<String, Object> tree,
-				@NonNull Class<? extends Representation> representationClass)
-		{
-			throw new RuntimeException("Serializer not implemented");
+public class CompositeTest {
+	public static void testInteger(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
 		}
-	}
-	
-	public @NonNull Composite createMap() {
-		Map<String, Object> test= new TreeMap<>();
 		
-		test.put("intProperty", 3);
-		test.put("longProperty", 3L);
-		test.put("stringProperty", "stuff");
-		test.put("doubleProperty1", 3.0F);
-		test.put("doubleProperty2", 3.4F);
-		test.put("localDateProperty", "2023-01-01");
-		test.put("timestampProperty", "2023-01-01T12:00:00Z");
-		
-		List<Integer> intList= new ArrayList<>();
-		intList.add(3);
-		test.put("intListProperty", intList);
-		
-		List<String> stringList= new ArrayList<>();
-		stringList.add("stuff");
-		test.put("stringListProperty", stringList);
-		
-		List<Map<String, Object>> objectList= new ArrayList<>();
-		objectList.add(new TreeMap<String, Object>());
-		test.put("objectListProperty", objectList);
-		
-		Map<String, Object> mapObject= new TreeMap<>();
-		mapObject.put("entry1", new TreeMap<String, Object>());
-		mapObject.put("entry2", new TreeMap<String, Object>());
-		
-		test.put("objectProperty", mapObject);
-		
-		TimeZone timezone= TimeZone.getTimeZone("America/New_York");
-		if (timezone == null) {
-			throw new RuntimeException("Failed to load timezone");
-		}
-		return new MapCompositeImpl(test, timezone, new DummySerializer(), null);
-	}
-
-	public @NonNull Composite createJson() {
-		JsonObject test= new JsonObject();
-		
-		test.addProperty("intProperty", 3);
-		test.addProperty("longProperty", 3L);
-		test.addProperty("stringProperty", "stuff");
-		test.addProperty("doubleProperty1", 3.0F);
-		test.addProperty("doubleProperty2", 3.4F);
-		test.addProperty("localDateProperty", "2023-01-01");
-		test.addProperty("timestampProperty", "2023-01-01T12:00:00Z");
-		
-		JsonArray intList= new JsonArray();
-		intList.add(3);
-		test.add("intListProperty", intList);
-		
-		JsonArray stringList= new JsonArray();
-		stringList.add("stuff");
-		test.add("stringListProperty", stringList);
-		
-		JsonArray objectList= new JsonArray();
-		objectList.add(new JsonObject());
-		test.add("objectListProperty", objectList);
-		
-		JsonObject mapObject= new JsonObject();
-		mapObject.add("entry1", new JsonObject());
-		mapObject.add("entry2", new JsonObject());
-		test.add("objectProperty", mapObject);
-		
-		TimeZone timezone= TimeZone.getTimeZone("America/New_York");
-		if (timezone == null) {
-			throw new RuntimeException("Failed to load timezone");
-		}
-
-		return new JsonCompositeImpl(test, timezone, null);
-	}
-
-	private void testInteger(@NonNull Composite c) {
 		try {
 			if (c.getRequiredInteger("intProperty") != 3) {
 				fail("Failed to retrieve value 3");
@@ -177,7 +89,12 @@ public class AccessTests {
 		}
 	}
 	
-	private void testLong(@NonNull Composite c) {
+	public static void testLong(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		try {
 			if (c.getRequiredInteger("longProperty") != 3) {
 				fail("Failed to retrieve value 3");
@@ -251,7 +168,12 @@ public class AccessTests {
 		}
 	}
 
-	private void testDouble(@NonNull Composite c) {
+	public static void testDouble(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		try {
 			if (c.getRequiredInteger("doubleProperty1") != 3) {
 				fail("Failed to retrieve value 3");
@@ -338,7 +260,12 @@ public class AccessTests {
 		}
 	}
 	
-	private void testString(@NonNull Composite c) {
+	public static void testString(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		try {
 			if (!c.getRequiredString("stringProperty").equals("stuff")) {
 				fail("Failed to retrieve value stuff");
@@ -375,7 +302,12 @@ public class AccessTests {
 	}
 	
 	
-	private void testMapIteration(@NonNull Composite map) throws SchemaException {
+	public static void testMapIteration(Composite map) throws SchemaException {
+		if (map == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		int i= 0;
 		boolean foundEntry1= false;
 		boolean foundEntry2= false;
@@ -411,7 +343,12 @@ public class AccessTests {
 		}
 	}
 	
-	private void testObject(@NonNull Composite c) {
+	public static void testObject(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		try {
 			Composite map= c.getRequiredObject("objectProperty");
 			testMapIteration(map);
@@ -448,7 +385,12 @@ public class AccessTests {
 		}
 	}
 	
-	private void testObjectList(@NonNull Composite c) {
+	public static void testObjectList(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		try {
 			Iterable<@NonNull Composite> list= c.getRequiredObjectArray("objectListProperty");
 			int count= 0;
@@ -497,7 +439,12 @@ public class AccessTests {
 		}
 	}
 	
-	private void testIntList(@NonNull Composite c) {
+	public static void testIntList(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		try {
 			Iterable<@NonNull Integer> list= c.getRequiredIntegerArray("intListProperty");
 			int count= 0;
@@ -552,7 +499,12 @@ public class AccessTests {
 		}
 	}
 	
-	private void testStringList(@NonNull Composite c) {
+	public static void testStringList(Composite c) {
+		if (c == null) {
+			fail("Reference composite is null");
+			return;
+		}
+		
 		try {
 			Iterable<@NonNull String> list= c.getRequiredStringArray("stringListProperty");
 			int count= 0;
@@ -607,77 +559,4 @@ public class AccessTests {
 		}
 	}
 
-	@Test
-	public void testMap() {
-		Composite c= createMap();
-		testInteger(c);
-		testLong(c);
-		testDouble(c);
-		testString(c);
-		
-		testObject(c);
-		
-		testObjectList(c);
-		testIntList(c);
-		testStringList(c);
-	}
-	
-	@Test
-	public void testJson() {
-		Composite c= createJson();
-		testInteger(c);
-		testLong(c);
-		testDouble(c);
-		testString(c);
-		
-		testObject(c);
-		
-		testObjectList(c);
-		testIntList(c);
-		testStringList(c);
-	}
-	
-	@Test
-	public void testYaml() {
-		List<String> lines= new ArrayList<>(20);
-		
-		lines.add("intProperty: 3");
-		lines.add("longProperty: 3");
-		lines.add("stringProperty: stuff");
-		lines.add("doubleProperty1: 3.0");
-		lines.add("doubleProperty2: 3.4");
-		lines.add("localDateProperty: 2023-01-01");
-		lines.add("timestampProperty: 2023-01-01T12:00:00Z");
-		lines.add("intListProperty:");
-		lines.add("  - 3");
-		lines.add("stringListProperty:");
-		lines.add("  - stuff");
-		lines.add("objectListProperty:");
-		lines.add("  - stuff: things");
-		lines.add("objectProperty:");
-		lines.add("  entry1:");
-		lines.add("    stuff: things");	// YAML doesn't create object without members
-		lines.add("  entry2:");
-		lines.add("    stuff: things");
-
-		@SuppressWarnings("null")
-		@NonNull String text= String.join("\n", lines);
-		
-		try {
-			Composite c= YamlComposite.Parse(text);
-			
-			testInteger(c);
-			testLong(c);
-			testDouble(c);
-			testString(c);
-			
-			testObject(c);
-			
-			testObjectList(c);
-			testIntList(c);
-			testStringList(c);
-		} catch (SchemaException e) {
-			fail("Failed parsing YAML", e);
-		}
-	}
 }
