@@ -24,4 +24,6 @@ module com.teaglu.composite {
 	exports com.teaglu.composite;
 	exports com.teaglu.composite.exception;
 	exports com.teaglu.composite.json;
+	exports com.teaglu.composite.yaml;
+	exports com.teaglu.composite.map;
 }
