@@ -486,6 +486,10 @@ public class MapCompositeImpl implements Composite {
 		return new MapCompositeMapImpl(members, timezone, serializer, prefix);
 	}
 
+	public String toString() { 
+		return serializer.serialize(members, String.class);
+	}
+	
 	@Override
 	public <Representation> @NonNull Representation serialize(
 			@NonNull Class<? extends Representation> representationClass)
