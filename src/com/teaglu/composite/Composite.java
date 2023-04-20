@@ -46,8 +46,8 @@ public interface Composite {
 	 * 
 	 * @return							Integer value
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not an integer number
 	 */
 	public int getRequiredInteger(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -61,8 +61,8 @@ public interface Composite {
 	 * 
 	 * @return							Long value
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not an integer number
 	 */
 	public long getRequiredLong(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -76,8 +76,8 @@ public interface Composite {
 	 * 
 	 * @return							Double value
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not a number
 	 */
 	public double getRequiredDouble(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -88,9 +88,10 @@ public interface Composite {
 	 * Retrieve a required string from the composite.
 	 *
 	 * @param name						Name of value to retrieve
-	 * @return
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @return							String value
+	 * 
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not a string
 	 */
 	public @NonNull String getRequiredString(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -104,8 +105,8 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							boolean value
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not boolean
 	 */
 	public boolean getRequiredBoolean(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -117,10 +118,11 @@ public interface Composite {
 	 * date type, or cannot be reasonably coerced to one, then throw an exception.
 	 *
 	 * @param name						Name of value to retrieve
-	 * @return
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
-	 * @throws FormatException
+	 * @return							Local date
+	 * 
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not a type that can be used as a date
+	 * @throws FormatException			Value cannot be interpreted as a date
 	 */
 	public @NonNull LocalDate getRequiredLocalDate(
 			@NonNull String name) throws MissingValueException, WrongTypeException, FormatException;
@@ -132,9 +134,11 @@ public interface Composite {
 	 * is not a date time, or cannot be reasonably interpreted, then throw an exception.
 	 *
 	 * @param name						Name of value to retrieve
-	 * @return
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @return							Timestamp
+	 * 
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not a type that can be interpreted as a timestamp
+	 * @throws FormatException			Value cannot be interpreted as a timestamp
 	 */
 	public @NonNull Timestamp getRequiredTimestamp(
 			@NonNull String name) throws MissingValueException, WrongTypeException, FormatException;
@@ -148,8 +152,8 @@ public interface Composite {
 	 * @param name						Name of value
 	 * @return							Sub-object as composite
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not an object or composite type
 	 */
 	public @NonNull Composite getRequiredObject(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -163,8 +167,8 @@ public interface Composite {
 	 * @param name						Name of array
 	 * @return							Iterable of array
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not an array of objects
 	 */
 	public @NonNull Iterable<@NonNull Composite> getRequiredObjectArray(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -178,8 +182,8 @@ public interface Composite {
 	 * @param name						Name of array
 	 * @return							Iterable of strings
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not an array of strings
 	 */
 	public @NonNull Iterable<@NonNull String> getRequiredStringArray(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -193,8 +197,8 @@ public interface Composite {
 	 * @param name						Name of array
 	 * @return							Iterable of integers
 	 * 
-	 * @throws MissingValueException
-	 * @throws WrongTypeException
+	 * @throws MissingValueException	Value is not present
+	 * @throws WrongTypeException		Value is not an array of integers
 	 */
 	public @NonNull Iterable<@NonNull Integer> getRequiredIntegerArray(
 			@NonNull String name) throws MissingValueException, WrongTypeException;
@@ -208,7 +212,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Integer value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not an integer
 	 */
 	public Integer getOptionalInteger(@NonNull String name) throws WrongTypeException;
 	
@@ -221,7 +225,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Long value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not a number or integer
 	 */
 	public Long getOptionalLong(@NonNull String name) throws WrongTypeException;
 	
@@ -234,7 +238,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Double value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not a number
 	 */
 	public Double getOptionalDouble(@NonNull String name) throws WrongTypeException;
 	
@@ -247,7 +251,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							String value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not a string
 	 */
 	public String getOptionalString(@NonNull String name) throws WrongTypeException;
 	
@@ -260,7 +264,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Boolean value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not boolean
 	 */
 	public Boolean getOptionalBoolean(@NonNull String name) throws WrongTypeException;
 	
@@ -274,7 +278,7 @@ public interface Composite {
 	 * @param defaultVal				Value to return if not specified
 	 * @return							Boolean value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not boolean
 	 */
 	public boolean getOptionalBoolean(
 			@NonNull String name,
@@ -289,7 +293,8 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							LocalDate value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not a type that can be interpreted as a date
+	 * @throws FormatException			Value cannot be interpreted as a date
 	 */
 	public LocalDate getOptionalLocalDate(
 			@NonNull String name) throws WrongTypeException, FormatException;
@@ -303,7 +308,8 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Timestamp value
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not a type that can be interpreted as a timestamp
+	 * @throws FormatException			Value cannot be interpreted as a timestamp
 	 */
 	public Timestamp getOptionalTimestamp(
 			@NonNull String name) throws WrongTypeException, FormatException;
@@ -317,7 +323,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Sub-object value as composite
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not a composite or object type
 	 */
 	public Composite getOptionalObject(@NonNull String name) throws WrongTypeException;
 
@@ -330,7 +336,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Iterable of objects
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not an array of objects
 	 */
 	public Iterable<@NonNull Composite> getOptionalObjectArray(
 			@NonNull String name) throws WrongTypeException;
@@ -344,7 +350,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Iterable of string
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not an array of strings
 	 */
 	public Iterable<@NonNull String> getOptionalStringArray(
 			@NonNull String name) throws WrongTypeException;
@@ -358,7 +364,7 @@ public interface Composite {
 	 * @param name						Name of value to retrieve
 	 * @return							Iterable of integer
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Value is not an array of integers
 	 */
 	public Iterable<@NonNull Integer> getOptionalIntegerArray(
 			@NonNull String name) throws WrongTypeException;
@@ -371,7 +377,7 @@ public interface Composite {
 	 *
 	 * @return							Iterable of name/object pairs
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Values are not all objects
 	 */
 	public @NonNull Iterable<Map.Entry<@NonNull String, @NonNull Composite>> getObjectMap(
 			) throws WrongTypeException;
@@ -394,7 +400,6 @@ public interface Composite {
 	 * 
 	 * @return							Serialized form
 	 * 
-	 * @throws UnsupportedSerializationException
 	 */
 	public @NonNull <Representation extends Object> Representation serialize(
 			@NonNull Class<? extends Representation> representationClass);

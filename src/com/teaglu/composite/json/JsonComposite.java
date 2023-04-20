@@ -73,7 +73,7 @@ public final class JsonComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Element is not an object
 	 */
 	public static @NonNull Composite Create(
 			@NonNull JsonElement element,
@@ -99,7 +99,7 @@ public final class JsonComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Element is not an object
 	 */
 	public static @NonNull Composite Create(
 			@NonNull JsonElement element) throws WrongTypeException
@@ -117,8 +117,8 @@ public final class JsonComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws JsonSyntaxException
+	 * @throws WrongTypeException		Input does not represent and object
+	 * @throws JsonSyntaxException		Unable to parse input
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull String data,
@@ -145,8 +145,8 @@ public final class JsonComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws JsonSyntaxException
+	 * @throws WrongTypeException		Input is not an object
+	 * @throws JsonSyntaxException		Unable ot parse input
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull String data) throws ParseException, WrongTypeException
@@ -159,13 +159,13 @@ public final class JsonComposite {
 	 * 
 	 * Parse a Composite from JSON read from an InputStreamReader.
 	 *
-	 * @param data						String in JSON format
+	 * @param reader					Input source
 	 * @param timezone					Timezone for interpretation
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws JsonSyntaxException
+	 * @throws WrongTypeException		Input is not an object
+	 * @throws JsonSyntaxException		Unable to parse input
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull InputStreamReader reader,
@@ -189,12 +189,12 @@ public final class JsonComposite {
 	 * Parse a Composite from JSON read from an InputStreamReader, assuming UTC as the timezone
 	 * for interpretation.
 	 *
-	 * @param data						String in JSON format
+	 * @param reader					Input source
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws JsonSyntaxException
+	 * @throws WrongTypeException		Input is not an object
+	 * @throws JsonSyntaxException		Unable to parse input
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull InputStreamReader reader) throws ParseException, WrongTypeException
@@ -212,7 +212,7 @@ public final class JsonComposite {
 	 * 
 	 * @return							Composite object
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Field does not contain a JSON object
 	 */
 	public static @Nullable Composite ParseObject(
 			@Nullable PGobject pgObject,
@@ -239,7 +239,7 @@ public final class JsonComposite {
 	 * 
 	 * @return							Composite object
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Field does not contain a JSON object
 	 */
 	public static @Nullable Composite ParseObject(
 			@Nullable PGobject pgObject) throws ParseException, WrongTypeException
@@ -257,7 +257,7 @@ public final class JsonComposite {
 	 * 
 	 * @return							List of Composite objects
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Field does not contain a JSON array
 	 */
 	public static @NonNull List<@NonNull Composite> ParseArray(
 			@Nullable PGobject pgObject,
@@ -299,7 +299,7 @@ public final class JsonComposite {
 	 * 
 	 * @return							Composite object
 	 * 
-	 * @throws WrongTypeException
+	 * @throws WrongTypeException		Field does not contain a JSON array
 	 */
 	public static @Nullable List<@NonNull Composite> ParseArray(
 			@Nullable PGobject pgObject) throws ParseException, WrongTypeException

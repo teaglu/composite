@@ -69,8 +69,8 @@ public class YamlComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws ParseException 
+	 * @throws WrongTypeException		Text is not a YAML object
+	 * @throws ParseException 			Unable to parse YAML
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull String text,
@@ -100,8 +100,8 @@ public class YamlComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws ParseException 
+	 * @throws WrongTypeException		Text is not a YAML object
+	 * @throws ParseException 			Unable to parse YAML
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull String text) throws WrongTypeException, ParseException
@@ -119,8 +119,8 @@ public class YamlComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws ParseException 
+	 * @throws WrongTypeException		Input is not a YAML object
+	 * @throws ParseException 			Unable to parse YAML
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull InputStreamReader reader,
@@ -150,8 +150,8 @@ public class YamlComposite {
 	 * 
 	 * @return							New Composite
 	 * 
-	 * @throws WrongTypeException
-	 * @throws ParseException 
+	 * @throws WrongTypeException		Input is not a YAML object
+	 * @throws ParseException 			Unable to parse YAML
 	 */
 	public static @NonNull Composite Parse(
 			@NonNull InputStreamReader reader) throws WrongTypeException, ParseException
