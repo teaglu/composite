@@ -245,7 +245,7 @@ public final class JsonCompositeImpl implements Composite {
 				}
 				JsonPrimitive pr= el.getAsJsonPrimitive();
 				if (pr.isNumber()) {
-					long l= pr.getAsInt();
+					long l= pr.getAsLong();
 					double d= pr.getAsDouble();
 					
 					if (d != (double)l) {

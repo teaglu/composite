@@ -10,6 +10,9 @@ import com.teaglu.composite.exception.MissingValueException;
 import com.teaglu.composite.exception.SchemaException;
 
 public class CompositeTest {
+	// Big enough not to find in an int
+	protected static final long TOO_LONG_FOR_INT= 4_294_967_297L;
+	
 	public static void testInteger(Composite c) {
 		if (c == null) {
 			fail("Reference composite is null");
@@ -109,6 +112,14 @@ public class CompositeTest {
 			}
 		} catch (SchemaException e) {
 			fail("Failed to retrieve int as long");
+		}
+		
+		try {
+			if (c.getRequiredLong("longProperty2") != TOO_LONG_FOR_INT) {
+				fail("Failed to retrieve value 3");
+			}
+		} catch (SchemaException e) {
+			fail("Failed to retrieve long outside int range");
 		}
 		
 		try {

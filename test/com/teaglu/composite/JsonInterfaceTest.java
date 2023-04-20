@@ -9,12 +9,15 @@ import com.google.gson.JsonObject;
 import com.teaglu.composite.json.JsonCompositeImpl;
 
 public class JsonInterfaceTest extends CompositeTest {
+
+
 	@BeforeAll
 	public static void createJson() {
 		JsonObject object= new JsonObject();
 		
 		object.addProperty("intProperty", 3);
-		object.addProperty("longProperty", 3L);
+		object.addProperty("longProperty", 3);
+		object.addProperty("longProperty2", TOO_LONG_FOR_INT);
 		object.addProperty("stringProperty", "stuff");
 		object.addProperty("doubleProperty1", 3.0F);
 		object.addProperty("doubleProperty2", 3.4F);
@@ -60,7 +63,7 @@ public class JsonInterfaceTest extends CompositeTest {
 	
 	@Test
 	public void testDouble() {
-		testLong(reference);
+		testDouble(reference);
 	}
 	
 	@Test

@@ -30,6 +30,7 @@ public class MapInterfaceTest extends CompositeTest {
 		
 		test.put("intProperty", 3);
 		test.put("longProperty", 3L);
+		test.put("longProperty2", TOO_LONG_FOR_INT);
 		test.put("stringProperty", "stuff");
 		test.put("doubleProperty1", 3.0F);
 		test.put("doubleProperty2", 3.4F);

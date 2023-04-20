@@ -18,6 +18,7 @@ public class YamlInterfaceTest extends CompositeTest {
 		
 		lines.add("intProperty: 3");
 		lines.add("longProperty: 3");
+		lines.add("longProperty2: " + Long.toString(TOO_LONG_FOR_INT));
 		lines.add("stringProperty: stuff");
 		lines.add("doubleProperty1: 3.0");
 		lines.add("doubleProperty2: 3.4");
@@ -59,7 +60,7 @@ public class YamlInterfaceTest extends CompositeTest {
 	
 	@Test
 	public void testDouble() {
-		testLong(reference);
+		testDouble(reference);
 	}
 	
 	@Test
