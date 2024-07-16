@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -35,7 +36,8 @@ public class YamlComposite {
 				@NonNull Class<? extends Representation> representationClass)
 		{
 			if (representationClass.isAssignableFrom(String.class)) {
-				Yaml yaml= new Yaml(new SafeConstructor());
+				LoaderOptions options= new LoaderOptions();
+				Yaml yaml= new Yaml(new SafeConstructor(options));
 				StringWriter writer= new StringWriter();
 				
 				yaml.dump(tree, writer);
@@ -76,7 +78,8 @@ public class YamlComposite {
 			@NonNull String text,
 			@NonNull TimeZone timezone) throws WrongTypeException, ParseException
 	{
-		Yaml yaml= new Yaml(new SafeConstructor());
+		LoaderOptions options= new LoaderOptions();
+		Yaml yaml= new Yaml(new SafeConstructor(options));
 		Map<String, Object> tree= null;
 		try {
 			tree= yaml.load(text);
@@ -126,7 +129,8 @@ public class YamlComposite {
 			@NonNull InputStreamReader reader,
 			@NonNull TimeZone timezone) throws WrongTypeException, ParseException
 	{
-		Yaml yaml= new Yaml(new SafeConstructor());
+		LoaderOptions options= new LoaderOptions();
+		Yaml yaml= new Yaml(new SafeConstructor(options));
 		Map<String, Object> tree= null;
 		try {
 			tree= yaml.load(reader);
